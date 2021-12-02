@@ -16,6 +16,24 @@ class funcs():
         self.nomeinpat.delete(0, END)
         self.cpfinpat.delete(0, END)
         self.telinpat.delete(0, END)
+        self.velhonome['text'] = ''
+        self.velhocpf['text'] = ''
+        self.velhotel['text'] = ''
+
+    def limpacampodel(self):
+        self.velhonome['text'] = ''
+        self.velhocpf['text'] = ''
+        self.velhotel['text'] = ''
+        self.cpfclinpat.delete(0,END)
+
+    def limpaagnd(self):
+        self.clinomeinpag.delete(0,END)
+        self.servinpag.delete(0,END)
+        self.atendinpag.delete(0,END)
+        self.valorinpag.delete(0,END)
+        self.horainpag.delete(0,END)
+        self.situang.delete(0,END)
+
 
     def conectadb(self):
         self.conn = sqlite3.connect('tiffanytech.sql')
@@ -117,6 +135,7 @@ class funcs():
                             WHERE cpf = ?''', (self.nomenovo, self.cpfnovo, self.telnovo, self.cpfbusc))
         self.conn.commit()
         MessageBox.showinfo('Concluido', 'Os Dados do Cliente Foram Atualizados')
+        self.limpacampoat()
         self.desconect()
 
     def deletarcadbusc(self):
@@ -125,6 +144,7 @@ class funcs():
         self.cursor.execute('DELETE FROM clientes WHERE cpf = ?', (self.cpfdel,))
         self.conn.commit()
         MessageBox.showinfo('Concluido', 'Cliente Deletado Com Sucesso')
+        self.limpacampodel()
         self.desconect()
         self.lista()
 
@@ -146,10 +166,12 @@ class funcs():
         self.conn.commit()
         self.desconect()
         self.listagn()
+        self.limpaagnd()
 
 class aplicativo(funcs):
     def __init__(self):
         self.app = app
+
         self.telamain()
         self.tabel()
         self.criatabelas()
@@ -158,10 +180,10 @@ class aplicativo(funcs):
 
     def telamain(self):
         self.app.title('Salão Tiffany')
-        self.app.geometry('560x263')
+        self.app.geometry('585x263')
         self.app.resizable(False, False)
         self.app.configure(background='#f8bdc6')
-        self.app.iconbitmap(r'mdchefeicon.ico')
+        self.app.iconbitmap('mdchefeicon.ico')
 
         # Labels/Buttons
         self.horinzontal = Label(self.app, background='#FFFFFF', foreground='#000')
@@ -170,6 +192,9 @@ class aplicativo(funcs):
         self.btcad = Button(self.app, text='Form Cliente', font='calibri', background='#ffb6c1', foreground='#000',command=cadastro)
         self.btcli = Button(self.app, text='Clientes', font='calibri', background='#ffb6c1', foreground='#000', command=clientes)
         self.btagn = Button(self.app, text='Agendar Horario', font='calibri', background='#ffb6c1', foreground='#000',command=agenda)
+        self.image = PhotoImage(file='refresh.png')
+        self.image = self.image.subsample(2, 2)
+        self.btref = Button(self.app,font=('Calibri',10,'bold'),image = self.image ,background = '#FFFFFF', foreground = '#000', command = self.listagn)
 
         # Configs
         self.verticaltxt.config(font=("Agency FB", 11, 'bold'))
@@ -181,7 +206,7 @@ class aplicativo(funcs):
         self.horinzontal.place(x=0, y=0, width=2000, height=50)
         self.btcli.place(x=230, y=15, width=150, height=30)
         self.btagn.place(x=390, y=15, width=150, height=30)
-
+        self.btref.place(x=545, y=15,width=30,height=30)
 
     def tabel(self):
         self.tabela = ttk.Treeview(app, height=30, column=('col1', 'col2', 'col3', 'col4', 'col5', 'col6', 'col7'))
@@ -229,6 +254,7 @@ class cadastro(funcs):
         self.horinzontal = Label(self.app2, background='#FFFFFF', foreground='#000')
         self.btcads = Button(self.app2,text='Cadastra Cliente',background = '#ffb6c1', foreground = '#000', command = self.insertcli)
 
+
         #Inputs
         self.nomeinpcad = Entry(self.app2,background = '#FFFFFF', foreground = '#000')
         self.cpfinpcad = Entry(self.app2,background = '#FFFFFF', foreground = '#000')
@@ -257,6 +283,7 @@ class clientes(funcs):
     def __init__(self):
         self.tela3()
         self.tabelcli()
+
         self.lista()
     def tela3(self):
         self.app3 = Toplevel()
@@ -275,6 +302,9 @@ class clientes(funcs):
         self.verticaltxt = Label(self.app3, text='T\nI\nF\nF\nA\nN\nY\n\nT\nE\nC\nH', background='#FFFFFF',foreground='#000')
         self.atl = Button(self.app3, text='Atualizar Cadastro', font='calibri', background='#ffb6c1', foreground='#000', command=atualizarcad)
         self.dell = Button(self.app3,text='Deletar Cadastro',font= 'calibri' ,background = '#ffb6c1', foreground = '#000',command= deletarcad)
+        self.image = PhotoImage(file='refresh.png')
+        self.image = self.image.subsample(2, 2)
+        self.btref = Button(self.app3, text='Recarregar', font=('Calibri', 10, 'bold'), image= self.image ,background='#ffffff', foreground='#000', command= self.lista)
 
         self.verticaltxt.config(font=("Agency FB", 11, 'bold'))
 
@@ -283,6 +313,8 @@ class clientes(funcs):
         self.horinzontal.place(x=0, y=0, width=2000, height=50)
         self.atl.place(x=70,y=15,width = 150,height = 30)
         self.dell.place(x=230,y=15,width = 150,height = 30)
+        self.btref.place(x=400, y=15, width=30, height=30)
+
     def tabelcli(self):
         self.tabelacli= ttk.Treeview(self.app3, height=30,column=('col1', 'col2', 'col3', 'col4','col5'))
         self.tabelacli.heading('#0', text='')
@@ -464,6 +496,11 @@ class agenda(funcs):
         self.btagen.config(font=('Calibri', 10, 'bold'))
         self.situang.config(font=('Calibri', 10, 'bold'))
         self.situtxt.config(font=('Calibri', 10, 'bold'))
+        self.clinomeinpag.config(font=('Calibri', 10, 'bold'))
+        self.servinpag.config(font=('Calibri', 10, 'bold'))
+        self.atendinpag.config(font=('Calibri', 10, 'bold'))
+        self.valorinpag.config(font=('Calibri', 10, 'bold'))
+        self.horainpag.config(font=('Calibri', 10, 'bold'))
 
         #Places
         self.situtxt.place(x=5, y=150, width=150, height=20)
